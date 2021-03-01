@@ -110,7 +110,7 @@ def skip_warranty(browser):
 
 def init_browser(session_key, skip_display=False, visible=False):
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("user-data-dir=~/." + session_key)
+    chrome_options.add_argument("user-data-dir=." + session_key)
     if skip_display:
       display = Display(visible=0 if not visible else 1, size=(1024, 768))
       display.start()
