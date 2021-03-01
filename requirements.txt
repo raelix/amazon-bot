@@ -1,0 +1,7 @@
+selenium
+requests
+BeautifulSoup4
+price-parser
+pyvirtualdisplay
+tld
+webdriver_manager
