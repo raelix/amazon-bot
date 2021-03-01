@@ -24,7 +24,7 @@ def main():
   loop_time = 0
   loop_refresh = 100
   while True:
-
+    print("Start loop!")
     # Someone lock the iteraction, probably we found a good match
     while need_to_wait.isSet():
       time.sleep(3)
@@ -46,17 +46,18 @@ def main():
       threads.append(single_thread)
     for thread in threads:
       thread.start()
-      # time.sleep(0.8)
+      # time.sleep(0.5)
     for thread in threads:
       thread.join()
 
     # Erase list
     threads = []
-    time.sleep(1)
+    # time.sleep(0.5)
 
 def callback(result, browser, need_to_wait, exit_flag):
   if need_to_wait.isSet():
     return
+  print("")
   print(json.dumps(result, indent=4, sort_keys=True))
   if result['is_available']:
     price = result['price']

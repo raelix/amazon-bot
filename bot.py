@@ -55,6 +55,8 @@ def buy(browser, url, isTest=False):
     tld_str = get_tld(url.strip())
     if tld_str == 'de':
       return try_to_buy_de(browser, isTest)
+    if tld_str == 'fr' or tld_str == 'es':
+      return try_to_buy_fr(browser, isTest)
     else:
       return try_to_buy(browser, isTest)
     # turbo-checkout-pyo-button
@@ -76,6 +78,9 @@ def try_to_buy_de(browser, isTest=False):
       skip_warranty(browser)
       print('Proceding to buy')
       browser.find_element_by_id('hlb-ptc-btn-native').click()
+      browser.find_element_by_xpath("/html/body/div[5]/div[2]/div/div[1]/form/div/div[1]/div[2]/span/a").click()
+      browser.find_element_by_xpath("/html/body/div[5]/div[1]/div/div[2]/div/div[1]/form/div[1]/div[2]/div/span[1]/span/input").click()
+      browser.find_element_by_xpath("/html/body/div[5]/div[1]/div[2]/div[2]/div/div[2]/div[2]/form/div[2]/div/div/div/span/span/input").click()
       print('proceed successfully')
     except Exception as e:
       print(e)
@@ -84,7 +89,44 @@ def try_to_buy_de(browser, isTest=False):
   try:
     print('buying...')
     if not isTest:
-      browser.find_element_by_id('turbo-checkout-pyo-button').click()
+      try:
+        browser.find_element_by_id('turbo-checkout-pyo-button').click()
+      except:
+        browser.find_element_by_xpath("//input[@name='placeYourOrder1']").click()
+    print('bought!')
+    time.sleep(3)
+    return True
+  except Exception as e:
+    print(e)
+    print('An error occurred while buying... :( ')
+
+
+def try_to_buy_fr(browser, isTest=False):
+  try:
+    print('Try buy now')
+    browser.find_element_by_xpath("//input[@name='submit.buy-now']").click()
+    skip_warranty(browser)
+  except:
+    try:
+      print('Buy now not available, try add to cart')
+      browser.find_element_by_xpath("//input[@name='submit.add-to-cart']").click()
+      print('Added')
+      skip_warranty(browser)
+      print('Proceding to buy')
+      browser.find_element_by_id('hlb-ptc-btn-native').click()
+      browser.find_element_by_class("a-button-input").click()
+      print('proceed successfully')
+    except Exception as e:
+      print(e)
+      print("Can't proceed using cart as well")
+      return
+  try:
+    print('buying...')
+    if not isTest:
+      try:
+        browser.find_element_by_id('turbo-checkout-pyo-button').click()
+      except:
+        browser.find_element_by_xpath("//input[@name='placeYourOrder1']").click()
     print('bought!')
     time.sleep(3)
     return True
@@ -113,8 +155,10 @@ def try_to_buy(browser, isTest=False):
   try:
     print('buying...')
     if not isTest:
-      # browser.find_element_by_id('turbo-checkout-pyo-button').click()
-      browser.find_element_by_xpath("//input[@name='placeYourOrder1']").click()
+      try:
+        browser.find_element_by_id('turbo-checkout-pyo-button').click()
+      except:
+        browser.find_element_by_xpath("//input[@name='placeYourOrder1']").click()
     print('bought!')
     time.sleep(3)
     return True
@@ -125,6 +169,12 @@ def try_to_buy(browser, isTest=False):
 def skip_warranty(browser):
   try:
     browser.find_element_by_id('siNoCoverage').click()
+  except:
+    print('warranty has not been asked')  
+  try:
+    time.sleep(1)
+    browser.find_element_by_id('siNoCoverage-announce').click()
+    time.sleep(1)
   except:
     print('warranty has not been asked')  
 
