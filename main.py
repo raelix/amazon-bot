@@ -10,7 +10,7 @@ from threading import Event
 
 session_key='dontforgetme'
 
-isTest=True
+isTest=False
 
 need_to_wait = Event()
 exit_flag = Event()
