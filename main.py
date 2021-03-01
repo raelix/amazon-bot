@@ -46,7 +46,7 @@ def main():
       threads.append(single_thread)
     for thread in threads:
       thread.start()
-      time.sleep(0.2)
+      # time.sleep(0.8)
     for thread in threads:
       thread.join()
 
@@ -80,9 +80,9 @@ def get_scrape_URLs(file="urls.txt"):
   URLs=[]
   with open(file, 'r') as urllist:
       for url in urllist.readlines():
-        URLs.append(url)
+        URLs.append(url.rstrip("\n"))
   return URLs
-
 
 if __name__ == "__main__":
   main()
+  

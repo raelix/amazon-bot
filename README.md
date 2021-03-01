@@ -31,6 +31,7 @@ python3 main.py
 ```
 
 ## TODO
+- [] Fix buy from other stores
 - [] Generate a scraper to fetch dynamic URL based on keywords
 - [] Create a Dockerfile to skip install dependencies
 - [] Optimize for all Amazon countries
