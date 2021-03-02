@@ -7,3 +7,7 @@ tld
 webdriver_manager
 lxml
 more-itertools
+pysocks
+requests 
+requests[socks]
+stem

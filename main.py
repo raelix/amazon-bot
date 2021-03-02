@@ -1,12 +1,12 @@
 from bot import buy, init_browser, refresh_login
-from scraper import scrape, get_proxies, get_proxies_old
+from scraper import scrape
 from secrets import limit_price, email, password
 from amazon_domains import get_unique_domains
 import json 
 import time
 from threading import Thread
 from threading import Event
-
+from tor import renew_connection
 
 session_key='dontforgetme'
 
@@ -20,12 +20,12 @@ def main():
   URLs = get_scrape_URLs()
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
-  proxies = get_proxies()
   threads = []
   loop_time = 0
   loop_refresh = 100
   while True:
     print("Start loop!")
+    renew_connection()
     # Someone lock the iteraction, probably we found a good match
     while need_to_wait.isSet():
       time.sleep(3)
@@ -43,7 +43,7 @@ def main():
 
     # Spawn one thread for each request trying to speed up the results
     for url in URLs:
-      single_thread = Thread(target=scrape, args=(url, callback, proxies, browser, need_to_wait, exit_flag))
+      single_thread = Thread(target=scrape, args=(url, callback, browser, need_to_wait, exit_flag))
       threads.append(single_thread)
     for thread in threads:
       thread.start()

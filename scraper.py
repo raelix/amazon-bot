@@ -7,6 +7,7 @@ from tld import get_tld
 import random
 import requests
 from lxml.html import fromstring
+from tor import get_tor_proxies, renew_connection
 
 user_agent_list = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
@@ -72,41 +73,23 @@ def get_headers(locale='it'):
       'Cache-Control': 'no-cache'
     }
 
-def scrape(url, callback, proxies, browser, need_to_wait, exit_flag): 
+
+def scrape(url, callback, browser, need_to_wait, exit_flag): 
     locale = get_tld(url.strip())
     my_headers=get_headers(locale)
     my_headers['User-Agent'] = random.choice(user_agent_list)
-    proxy = random.choice(proxies)
-    page = requests.get(url, headers=my_headers, proxies={"http": proxy, "https": proxy})
+    page = requests.get(url, headers=my_headers, proxies=get_tor_proxies())
     if page.status_code > 500:
         if "To discuss automated access to Amazon data please contact" in page.text:
             print("Page %s was blocked by Amazon. Please try using better proxies\n"%url)
+            renew_connection()
         else:
             print("Page %s must have been blocked by Amazon as the status code was %d"%(url,page.status_code))
         return None
     result = parse(url, page)
+    # print(requests.get("http://httpbin.org/ip", proxies=get_tor_proxies()).text)
     callback(result, browser, need_to_wait, exit_flag)
   
-def get_proxies_old():
-    url = 'https://free-proxy-list.net/'
-    response = requests.get(url)
-    parser = fromstring(response.text)
-    proxies = []
-    for i in parser.xpath('//tbody/tr')[:10]:
-        if i.xpath('.//td[7][contains(text(),"yes")]'):
-            #Grabbing IP and corresponding PORT
-            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
-            proxies.append(proxy)
-    print(proxies)
-    return proxies
-
-def get_proxies():
-  url = 'https://proxy-daily.com/'
-  response = requests.get(url)
-  parser = fromstring(response.text)
-  proxies = []
-  return parser.xpath('/html/body/div[3]/div/div[3]/div[2]/text()')[0].strip().split('\n')
-
 def parse(url, page):
   soup = BeautifulSoup(page.content, 'html.parser')
   result = dict()
