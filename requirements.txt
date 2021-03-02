@@ -5,3 +5,5 @@ price-parser
 pyvirtualdisplay
 tld
 webdriver_manager
+lxml
+more-itertools
