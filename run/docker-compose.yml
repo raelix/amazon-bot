@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  scraper:
+    image: docker.io/raelix/amazon-bot:latest
+    environment:
+      - IS_TEST=False
+      - USE_TOR=False
+      - LIMIT_PRICE=${LIMIT_PRICE}
+      - AMAZON_EMAIL=${AMAZON_EMAIL}
+      - AMAZON_PASSWORD=${AMAZON_PASSWORD}
+    volumes:
+      - ./urls.txt:/usr/src/app/urls.txt
+      - /home/gascenzo/dev/amazon-bot/run/data:/data

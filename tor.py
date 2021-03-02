@@ -1,5 +1,4 @@
 import requests
-from secrets import tor_secret
 from stem import Signal
 from stem.control import Controller
 #https://stackoverflow.com/questions/30286293/make-requests-using-python-over-tor
@@ -25,10 +24,7 @@ def get_tor_session():
 
 def renew_connection():
     with Controller.from_port(port = 9051) as controller:
-        controller.authenticate(password=tor_secret)
+        controller.authenticate(password='scrapeit')
         controller.signal(Signal.NEWNYM)
     session = get_tor_session()
     print(session.get("http://httpbin.org/ip").text)
-    
-# session = get_tor_session()
-# print(session.get("http://httpbin.org/ip").text)

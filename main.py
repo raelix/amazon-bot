@@ -1,9 +1,10 @@
 from bot import buy, init_browser, refresh_login
 from scraper import scrape
-from secrets import limit_price, email, password
+import secrets
 from amazon_domains import get_unique_domains
 import json 
 import time
+import os
 from threading import Thread
 from threading import Event
 from threading import Lock
@@ -11,15 +12,36 @@ from tor import renew_connection
 from ThreadSafeCounter import ThreadSafeCounter
 
 session_key='dontforgetme'
-use_tor=True
-isTest=False
+
+## Configuration
+
+use_tor=os.getenv('USE_TOR', True)
+
+isTest=os.getenv('IS_TEST', False)
+
+is_running_in_container=os.getenv('IS_CONTAINERIZED', True)
+
+limit_price=os.getenv('LIMIT_PRICE', secret.limit_price)
+email=os.getenv('AMAZON_EMAIL', secret.email)
+password=os.getenv('AMAZON_PASSWORD', secret.password)
+
 
 need_to_wait = Event()
 exit_flag = Event()
 lock = Lock()
 
 def main():
-  browser = init_browser(session_key, skip_display=False, visible=True)
+  print("Configuration:")
+  print("  use TOR: %s" % use_tor)
+  print("  is a test: %s" % isTest)
+  print("  is containerized: %s" % is_running_in_container)
+  print("  limit price: %s" % limit_price)
+  print("  email: %s" % email)
+  print("")
+  if is_running_in_container:
+    browser = init_browser(session_key, skip_display=True, visible=False)
+  else:
+    browser = init_browser(session_key, skip_display=False, visible=True)
   URLs = get_scrape_URLs()
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
@@ -54,11 +76,12 @@ def main():
     for thread in threads:
       thread.join()
     with lock:
-      print('Failure %s' % threadSafeCounter.get())
-      if threadSafeCounter.get() > len(threads) / 2:
-        print('Renewal IP')
-        renew_connection()
+      print('Failures: %s' % threadSafeCounter.get())
+      if threadSafeCounter.get() > (len(threads) / 1.2):
         threadSafeCounter.reset()
+        if use_tor:
+          print('Renewal IP')
+          renew_connection()
     # Erase list
     threads = []
     # time.sleep(0.5)

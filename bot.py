@@ -17,6 +17,7 @@ def refresh_login(browser, portal, email, password):
   go_to_my_orders(browser)
   type_email(browser, email)
   type_password(browser, password)
+  browser.save_screenshot('/data/login.png')
 
 def go_to_my_account(browser):
   click_it(browser, "//a[@data-nav-role='signin']")
@@ -138,15 +139,18 @@ def try_to_buy(browser, isTest=False):
   try:
     print('Try buy now')
     browser.find_element_by_xpath("//input[@name='submit.buy-now']").click()
+    browser.save_screenshot('/data/buynow.png')
     skip_warranty(browser)
   except:
     try:
       print('Buy now not available, try add to cart')
       browser.find_element_by_xpath("//input[@name='submit.add-to-cart-ubb']").click()
+      browser.save_screenshot('/data/add-to-cart.png')
       print('Added')
       skip_warranty(browser)
       print('Proceding to buy')
       browser.find_element_by_id('hlb-ptc-btn-native').click()
+      browser.save_screenshot('/data/buying.png')
       print('proceed successfully')
     except Exception as e:
       print(e)
@@ -157,8 +161,10 @@ def try_to_buy(browser, isTest=False):
     if not isTest:
       try:
         browser.find_element_by_id('turbo-checkout-pyo-button').click()
+        browser.save_screenshot('/data/bought.png')
       except:
         browser.find_element_by_xpath("//input[@name='placeYourOrder1']").click()
+        browser.save_screenshot('/data/bought.png')
     print('bought!')
     time.sleep(3)
     return True
