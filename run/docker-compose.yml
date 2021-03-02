@@ -9,5 +9,5 @@ services:
       - AMAZON_EMAIL=${AMAZON_EMAIL}
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
-      - ./urls.txt:/usr/src/app/urls.txt
-      - /home/gascenzo/dev/amazon-bot/run:/data
+      - ./../urls.txt:/usr/src/app/urls.txt
+      - ./:/data

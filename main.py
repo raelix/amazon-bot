@@ -73,15 +73,15 @@ def main():
     for thread in threads:
       thread.join()
     with lock:
-      print('Failures: %s' % threadSafeCounter.get())
+      print('Failures: %s/%s' % (threadSafeCounter.get(), len(threads)))
       if threadSafeCounter.get() > (len(threads) / 1.2):
-        threadSafeCounter.reset()
         if use_tor:
           print('Renewal IP')
           renew_connection()
+      threadSafeCounter.reset()
     # Erase list
     threads = []
-    # time.sleep(0.5)
+    time.sleep(0.5)
 
 def callback(result, browser, need_to_wait, exit_flag):
   if need_to_wait.isSet():

@@ -8,6 +8,9 @@ import random
 import requests
 from lxml.html import fromstring
 from tor import get_tor_proxies
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
 
 user_agent_list = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
@@ -72,28 +75,47 @@ def get_headers(locale='it'):
       'Cache-Control': 'max-age=0',
     }
 
-# 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0',
+
+retry_strategy = Retry(
+    total=3,
+    status_forcelist=[429, 500, 502, 503, 504],
+    method_whitelist=["HEAD", "GET", "OPTIONS"]
+)
 
 def scrape(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threadSafeCounter): 
+    
     locale = get_tld(url.strip())
+    
     my_headers=get_headers(locale)
     my_headers['User-Agent'] = random.choice(user_agent_list)
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    http = requests.Session()
+    http.mount("https://", adapter)
+    http.mount("http://", adapter)
+
     if use_tor:
-      page = requests.get(url, headers=my_headers, proxies=get_tor_proxies())
+      page = http.get(url, headers=my_headers, proxies=get_tor_proxies())
     else:
-      page = requests.get(url, headers=my_headers)
-    if page.status_code > 500:
+      page = http.get(url, headers=my_headers)
+
+    if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
+
         if "To discuss automated access to Amazon data please contact" in page.text:
             print("Page %s was blocked by Amazon. Please try using better proxies\n"%url)
-            with lock:
-              threadSafeCounter.increment()
+
         else:
             print("Page %s must have been blocked by Amazon as the status code was %d"%(url,page.status_code))
-        return None
+
+        with lock:
+          threadSafeCounter.increment()
+        return 
+      
     result = parse(url, page)
-    # print(requests.get("http://httpbin.org/ip", proxies=get_tor_proxies()).text)
     callback(result, browser, need_to_wait, exit_flag)
-  
+
+
+
 def parse(url, page):
   soup = BeautifulSoup(page.content, 'html.parser')
   result = dict()
