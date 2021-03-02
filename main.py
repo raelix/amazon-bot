@@ -15,15 +15,12 @@ session_key='dontforgetme'
 
 ## Configuration
 
-use_tor=os.getenv('USE_TOR', True)
-
-isTest=os.getenv('IS_TEST', False)
-
-is_running_in_container=os.getenv('IS_CONTAINERIZED', True)
-
-limit_price=os.getenv('LIMIT_PRICE', secret.limit_price)
-email=os.getenv('AMAZON_EMAIL', secret.email)
-password=os.getenv('AMAZON_PASSWORD', secret.password)
+use_tor=os.getenv('USE_TOR', 'true').lower() in ['true', '1']
+isTest=os.getenv('IS_TEST', 'false').lower() in ['true', '1']
+is_running_in_container=os.getenv('IS_CONTAINERIZED', 'true').lower() in ['true', '1']
+limit_price=os.getenv('LIMIT_PRICE', secrets.limit_price)
+email=os.getenv('AMAZON_EMAIL', secrets.email)
+password=os.getenv('AMAZON_PASSWORD', secrets.password)
 
 
 need_to_wait = Event()

@@ -10,4 +10,4 @@ services:
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
       - ./urls.txt:/usr/src/app/urls.txt
-      - /home/gascenzo/dev/amazon-bot/run/data:/data
+      - /home/gascenzo/dev/amazon-bot/run:/data

@@ -1,3 +1,3 @@
-limit_price=
-email=
-password=
+limit_price=""
+email=""
+password=""
