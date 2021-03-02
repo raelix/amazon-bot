@@ -73,6 +73,7 @@ def get_headers(locale='it'):
       'Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'Cache-Control': 'max-age=0',
+      'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
     }
 
 
@@ -83,34 +84,37 @@ retry_strategy = Retry(
 )
 
 def scrape(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threadSafeCounter): 
-    
+    there_was_a_failure = False
+
     locale = get_tld(url.strip())
     
-    my_headers=get_headers(locale)
-    my_headers['User-Agent'] = random.choice(user_agent_list)
+    # my_headers=get_headers(locale)
+    # my_headers['User-Agent'] = random.choice(user_agent_list)
     
-    adapter = HTTPAdapter(max_retries=retry_strategy)
-    http = requests.Session()
-    http.mount("https://", adapter)
-    http.mount("http://", adapter)
+    # adapter = HTTPAdapter(max_retries=retry_strategy)
+    # http = requests.Session()
+    # http.mount("https://", adapter)
+    # http.mount("http://", adapter)
+    try:
+      if use_tor:
+        page = requests.get(url, headers=get_headers(locale), proxies=get_tor_proxies(), timeout=5)
+      else:
+        page = requests.get(url, headers=my_headers)
 
-    if use_tor:
-      page = http.get(url, headers=my_headers, proxies=get_tor_proxies())
-    else:
-      page = http.get(url, headers=my_headers)
+      if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
+          
+          there_was_a_failure = True
+          print("Page %s didn't work, the status code was %d" % (url,page.status_code))
 
-    if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
+    except:
+      there_was_a_failure = True
+      print("Page %s didn't work. It failed without status code" % (url))
 
-        if "To discuss automated access to Amazon data please contact" in page.text:
-            print("Page %s was blocked by Amazon. Please try using better proxies\n"%url)
+    if there_was_a_failure:
+      with lock:
+        threadSafeCounter.increment()
+      return 
 
-        else:
-            print("Page %s must have been blocked by Amazon as the status code was %d"%(url,page.status_code))
-
-        with lock:
-          threadSafeCounter.increment()
-        return 
-      
     result = parse(url, page)
     callback(result, browser, need_to_wait, exit_flag)
 

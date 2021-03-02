@@ -69,7 +69,7 @@ def main():
       threads.append(single_thread)
     for thread in threads:
       thread.start()
-      time.sleep(0.5)
+      # time.sleep(1)
     for thread in threads:
       thread.join()
     with lock:
@@ -81,7 +81,7 @@ def main():
       threadSafeCounter.reset()
     # Erase list
     threads = []
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
 def callback(result, browser, need_to_wait, exit_flag):
   if need_to_wait.isSet():
