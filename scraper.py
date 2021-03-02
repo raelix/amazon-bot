@@ -73,9 +73,9 @@ def get_headers(locale='it'):
       'Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'Cache-Control': 'max-age=0',
-      'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
     }
 
+      # 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0'
 
 retry_strategy = Retry(
     total=3,
@@ -83,13 +83,13 @@ retry_strategy = Retry(
     method_whitelist=["HEAD", "GET", "OPTIONS"]
 )
 
-def scrape(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threadSafeCounter): 
+def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter): 
     there_was_a_failure = False
 
     locale = get_tld(url.strip())
     
-    # my_headers=get_headers(locale)
-    # my_headers['User-Agent'] = random.choice(user_agent_list)
+    my_headers=get_headers(locale)
+    my_headers['User-Agent'] = random.choice(user_agent_list)
     
     # adapter = HTTPAdapter(max_retries=retry_strategy)
     # http = requests.Session()
@@ -97,26 +97,27 @@ def scrape(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threa
     # http.mount("http://", adapter)
     try:
       if use_tor:
-        page = requests.get(url, headers=get_headers(locale), proxies=get_tor_proxies(), timeout=5)
+        page = requests.get(url, headers=my_headers, proxies=get_tor_proxies(), timeout=10)
       else:
-        page = requests.get(url, headers=my_headers)
+        page = requests.get(url, headers=my_headers, timeout=10)
 
       if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
           
           there_was_a_failure = True
           print("Page %s didn't work, the status code was %d" % (url,page.status_code))
 
-    except:
+    except Exception as e:
       there_was_a_failure = True
-      print("Page %s didn't work. It failed without status code" % (url))
+      print("Page %s didn't work. It failed without status code, error: %s" % (url, e))
 
     if there_was_a_failure:
       with lock:
-        threadSafeCounter.increment()
+        error_counter.value = error_counter.value + 1
+        queue.get()
       return 
 
     result = parse(url, page)
-    callback(result, browser, need_to_wait, exit_flag)
+    callback(queue, result, browser, need_to_wait, exit_flag)
 
 
 

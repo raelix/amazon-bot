@@ -35,3 +35,5 @@ python3 main.py
 - [] Generate a scraper to fetch dynamic URL based on keywords
 - [] Create a Dockerfile to skip install dependencies
 - [] Optimize for all Amazon countries
+- [] bug: Some processes wait due to the with lock
+- [] bug: the ip renewal doesn't work always
