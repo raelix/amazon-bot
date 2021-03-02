@@ -6,26 +6,29 @@ import json
 import time
 from threading import Thread
 from threading import Event
+from threading import Lock
 from tor import renew_connection
+from ThreadSafeCounter import ThreadSafeCounter
 
 session_key='dontforgetme'
-
+use_tor=True
 isTest=False
 
 need_to_wait = Event()
 exit_flag = Event()
+lock = Lock()
 
 def main():
   browser = init_browser(session_key, skip_display=False, visible=True)
   URLs = get_scrape_URLs()
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
+  threadSafeCounter = ThreadSafeCounter()
   threads = []
   loop_time = 0
   loop_refresh = 100
   while True:
     print("Start loop!")
-    renew_connection()
     # Someone lock the iteraction, probably we found a good match
     while need_to_wait.isSet():
       time.sleep(3)
@@ -43,14 +46,19 @@ def main():
 
     # Spawn one thread for each request trying to speed up the results
     for url in URLs:
-      single_thread = Thread(target=scrape, args=(url, callback, browser, need_to_wait, exit_flag))
+      single_thread = Thread(target=scrape, args=(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threadSafeCounter))
       threads.append(single_thread)
     for thread in threads:
       thread.start()
-      # time.sleep(0.5)
+      time.sleep(0.5)
     for thread in threads:
       thread.join()
-
+    with lock:
+      print('Failure %s' % threadSafeCounter.get())
+      if threadSafeCounter.get() > len(threads) / 2:
+        print('Renewal IP')
+        renew_connection()
+        threadSafeCounter.reset()
     # Erase list
     threads = []
     # time.sleep(0.5)

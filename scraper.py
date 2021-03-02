@@ -7,7 +7,7 @@ from tld import get_tld
 import random
 import requests
 from lxml.html import fromstring
-from tor import get_tor_proxies, renew_connection
+from tor import get_tor_proxies
 
 user_agent_list = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
@@ -15,6 +15,7 @@ user_agent_list = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0',
 ]
 
 def get_headers(locale='it'):
@@ -66,23 +67,26 @@ def get_headers(locale='it'):
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.5',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
       'Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
-      'Pragma': 'no-cache',
-      'Cache-Control': 'no-cache'
+      'Cache-Control': 'max-age=0',
     }
 
+# 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:86.0) Gecko/20100101 Firefox/86.0',
 
-def scrape(url, callback, browser, need_to_wait, exit_flag): 
+def scrape(url, callback, lock, browser, use_tor, need_to_wait, exit_flag, threadSafeCounter): 
     locale = get_tld(url.strip())
     my_headers=get_headers(locale)
     my_headers['User-Agent'] = random.choice(user_agent_list)
-    page = requests.get(url, headers=my_headers, proxies=get_tor_proxies())
+    if use_tor:
+      page = requests.get(url, headers=my_headers, proxies=get_tor_proxies())
+    else:
+      page = requests.get(url, headers=my_headers)
     if page.status_code > 500:
         if "To discuss automated access to Amazon data please contact" in page.text:
             print("Page %s was blocked by Amazon. Please try using better proxies\n"%url)
-            renew_connection()
+            with lock:
+              threadSafeCounter.increment()
         else:
             print("Page %s must have been blocked by Amazon as the status code was %d"%(url,page.status_code))
         return None
