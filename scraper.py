@@ -83,32 +83,32 @@ retry_strategy = Retry(
     method_whitelist=["HEAD", "GET", "OPTIONS"]
 )
 
-def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter): 
+def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter, proxies): 
     there_was_a_failure = False
 
     locale = get_tld(url.strip())
     
     my_headers=get_headers(locale)
     my_headers['User-Agent'] = random.choice(user_agent_list)
-    
+
     # adapter = HTTPAdapter(max_retries=retry_strategy)
     # http = requests.Session()
     # http.mount("https://", adapter)
     # http.mount("http://", adapter)
     try:
       if use_tor:
-        page = requests.get(url, headers=my_headers, proxies=get_tor_proxies(), timeout=10)
+        page = requests.get(url, headers=my_headers, proxies=get_tor_proxies(), timeout=3)
       else:
-        page = requests.get(url, headers=my_headers, timeout=10)
+        page = requests.get(url, headers=my_headers, proxies=proxies, timeout=3)
 
       if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
           
           there_was_a_failure = True
-          print("Page %s didn't work, the status code was %d" % (url,page.status_code))
+          # print("Page %s didn't work, the status code was %d" % (url,page.status_code))
 
     except Exception as e:
       there_was_a_failure = True
-      print("Page %s didn't work. It failed without status code, error: %s" % (url, e))
+      # print("Page %s didn't work. It failed without status code, error: %s" % (url, e))
 
     if there_was_a_failure:
       with lock:
