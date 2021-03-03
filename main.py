@@ -11,8 +11,8 @@ from threading import Thread
 from threading import Event
 from threading import Lock
 from tor import renew_connection
-from ThreadSafeCounter import ThreadSafeCounter
 import random
+from scraper import get_proxy_list
 
 session_key='dontforgetme'
 
@@ -58,8 +58,6 @@ def load_list_from_file(file="urls.txt"):
         URLs.append(url.rstrip("\n"))
   return URLs
 
-
-
 def main():
   print("Configuration:")
   print("  use TOR: %s" % use_tor)
@@ -73,15 +71,14 @@ def main():
   else:
     browser = init_browser(session_key, skip_display=False, visible=True)
   URLs = load_list_from_file()
-  proxies = load_list_from_file('http_proxies.txt')
+  proxies = load_list_from_file('proxies.txt')
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
-  threadSafeCounter = ThreadSafeCounter()
-  loop_time = 0
+  loop_login = 0
   loop_request = 0
-  loop_refresh = 10000
+  loop_before_login = 10000
   queue = Queue()
-  index = 0
+  urls_index = 0
   proxy = get_new_proxy(proxies)
   with Manager() as manager:
 
@@ -98,19 +95,19 @@ def main():
       if exit_flag.is_set():
         exit(0)
 
-      # Refresh login after $loop_refresh loops
-      if loop_time < loop_refresh:
-        loop_time +=1
+      # Refresh login after $loop_before_login loops
+      if loop_login < loop_before_login:
+        loop_login +=1
       else:
-        loop_time = 0
+        loop_login = 0
         login_to_amazon(domains_to_login, browser, email, password)
 
-      if index == len(URLs):
-        index = 0
+      if urls_index == len(URLs):
+        urls_index = 0
       
-      url = URLs[index]
+      url = URLs[urls_index]
 
-      queue.put(index) 
+      queue.put(urls_index) 
 
       process = Process(target=scrape, args=(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter, proxy))
       process.start()
@@ -130,15 +127,16 @@ def main():
           loop_request = 0
           error_counter.value = 0
 
-      index += 1
+      urls_index += 1
       
 
 def get_new_proxy(proxies):
   selected_proxy = random.choice(proxies)
   proxies_dict = {}
-  # proxies_dict['http'] = selected_proxy
   proxies_dict['https'] = selected_proxy
   return proxies_dict
 
 if __name__ == "__main__":
   main()
+
+

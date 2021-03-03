@@ -10,4 +10,5 @@ services:
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
       - ./../urls.txt:/usr/src/app/urls.txt
+      - ./../proxies.txt:/usr/src/app/proxies.txt
       - .:/data
