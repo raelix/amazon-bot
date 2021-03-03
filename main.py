@@ -10,14 +10,14 @@ from multiprocessing import Queue, Process, Manager, Value
 from threading import Thread
 from threading import Event
 from threading import Lock
-from tor import renew_connection
+from tor import renew_connection, get_source_ip, get_tor_proxies
 import random
-from scraper import get_proxy_list
 
 session_key='dontforgetme'
 
 ## Configuration
 
+percentage=int(os.getenv('PERCENTAGE', 60))
 use_tor=os.getenv('USE_TOR', 'true').lower() in ['true', '1']
 isTest=os.getenv('IS_TEST', 'false').lower() in ['true', '1']
 is_running_in_container=os.getenv('IS_CONTAINERIZED', 'true').lower() in ['true', '1']
@@ -75,17 +75,24 @@ def main():
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
   loop_login = 0
-  loop_request = 0
   loop_before_login = 10000
   queue = Queue()
   urls_index = 0
-  proxy = get_new_proxy(proxies)
   with Manager() as manager:
 
     need_to_wait = manager.Event()
     exit_flag = manager.Event()
     lock = manager.Lock()
+    my_ip = str()
     error_counter = Value('i', 0)
+    success_counter = Value('i', 0)
+    loop_request = Value('i', 0)
+    if use_tor:
+      proxy = get_tor_proxies()
+      my_ip = get_source_ip(proxy)
+    else:
+      proxy = get_new_proxy(proxies)
+      my_ip = get_source_ip(proxy)
     while True:
       # Someone lock the iteraction, probably we found a good match
       while need_to_wait.is_set():
@@ -109,23 +116,25 @@ def main():
 
       queue.put(urls_index) 
 
-      process = Process(target=scrape, args=(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter, proxy))
+      process = Process(target=scrape, args=(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_counter, success_counter, proxy, my_ip))
       process.start()
-      loop_request += 1
+      loop_request.value = loop_request.value + 1
       while queue.qsize() > 100:
         print("Reached queue processes...waiting previous to complete")
         time.sleep(1)
       
-
       with lock:
-        if error_counter.value * 100 / loop_request > 70 :
-          print('Percentage of failures: %s' % (error_counter.value * 100 / loop_request))
+        # print('error:%s, success:%s, queue:%s, total:%s' % (error_counter.value,success_counter.value,queue.qsize(),loop_request.value))
+        if error_counter.value * 100 / loop_request.value > percentage:
+          print('Percentage of failures: %s' % (error_counter.value * 100 / loop_request.value))
           if use_tor:
-            renew_connection()
+            my_ip = renew_connection()
           else:
             proxy = get_new_proxy(proxies)
-          loop_request = 0
+            my_ip = get_source_ip(proxy)
+          loop_request.value = queue.qsize()
           error_counter.value = 0
+          success_counter.value = 0
 
       urls_index += 1
       

@@ -5,7 +5,6 @@ from headers import get_headers
 from price_parser import parse_price
 from tld import get_tld
 import requests
-from tor import get_tor_proxies
 # from requests.adapters import HTTPAdapter
 # from requests.packages.urllib3.util.retry import Retry
 
@@ -16,7 +15,7 @@ from tor import get_tor_proxies
 #     method_whitelist=["HEAD", "GET", "OPTIONS"]
 # )
 
-def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag, error_counter, proxy): 
+def scrape(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_counter, success_counter, proxy, my_ip): 
     there_was_a_failure = False
 
     locale = get_tld(url.strip())
@@ -26,10 +25,7 @@ def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag
     # http.mount("https://", adapter)
     # http.mount("http://", adapter)
     try:
-      if use_tor:
-        page = requests.get(url, headers=get_headers(locale), proxies=get_tor_proxies(), timeout=3)
-      else:
-        page = requests.get(url, headers=get_headers(locale), proxies=proxy, timeout=3)
+      page = requests.get(url, headers=get_headers(locale), proxies=proxy, timeout=3)
 
       if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
           
@@ -45,13 +41,15 @@ def scrape(queue, url, callback, lock, browser, use_tor, need_to_wait, exit_flag
         error_counter.value = error_counter.value + 1
         queue.get()
       return 
-
-    result = parse(url, page)
+    else:
+      with lock:
+        success_counter.value = success_counter.value + 1
+    result = parse(url, page, my_ip)
     callback(queue, result, browser, need_to_wait, exit_flag)
 
 
 
-def parse(url, page):
+def parse(url, page, my_ip):
   soup = BeautifulSoup(page.content, 'html.parser')
   result = dict()
   result['title'] = try_find(soup, 'span', {'id':'productTitle'})
@@ -69,6 +67,7 @@ def parse(url, page):
 
   result['buy_now_available'] = try_find(soup,'span',{'id':'submit.buy-now-announce'}) is not None
   result['url'] = url
+  result['source_ip'] = my_ip
   return result
 
 def get_price(price):

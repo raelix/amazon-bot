@@ -4,11 +4,11 @@ services:
     image: docker.io/raelix/amazon-bot:latest
     environment:
       - IS_TEST=False
-      - USE_TOR=True
+      - USE_TOR=False
+      - PERCENTAGE=70
       - LIMIT_PRICE=${LIMIT_PRICE}
       - AMAZON_EMAIL=${AMAZON_EMAIL}
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
       - ./../urls.txt:/usr/src/app/urls.txt
       - ./../proxies.txt:/usr/src/app/proxies.txt
-      - .:/data

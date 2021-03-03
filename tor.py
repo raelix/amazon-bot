@@ -1,6 +1,7 @@
 import requests
 from stem import Signal
 from stem.control import Controller
+import time
 #https://stackoverflow.com/questions/30286293/make-requests-using-python-over-tor
 # TORRC conf
 #ControlPort 9051
@@ -16,15 +17,27 @@ from stem.control import Controller
 def get_tor_proxies():
     return {"http": 'socks5://127.0.0.1:9050', "https": 'socks5://127.0.0.1:9050'}
 
-def get_tor_session():
-    session = requests.session()
-    session.proxies = {'http':  'socks5://127.0.0.1:9050',
-                       'https': 'socks5://127.0.0.1:9050'}
-    return session
-
 def renew_connection():
     with Controller.from_port(port = 9051) as controller:
+        old_ip = get_source_ip(get_tor_proxies())
         controller.authenticate(password='scrapeit')
         controller.signal(Signal.NEWNYM)
-    session = get_tor_session()
-    print(session.get("http://httpbin.org/ip").text)
+        seg = 0
+        new_ip = get_source_ip(get_tor_proxies())
+        if new_ip != None:
+            while new_ip == old_ip:
+                new_ip = get_source_ip(get_tor_proxies())
+                time.sleep(1)
+                seg += 1
+                print ("Waiting to obtain new IP: %s Seconds" % seg) 
+            return new_ip
+
+def get_source_ip(proxy):
+    try:
+        session = requests.session()
+        session.proxies = proxy
+        source_ip = session.get("https://icanhazip.com/", timeout=3).text.strip()
+        # print(source_ip)
+        return source_ip
+    except Exception as e:
+        print("Cannot get remote IP")
