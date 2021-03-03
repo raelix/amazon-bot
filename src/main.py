@@ -51,9 +51,9 @@ def login_to_amazon(URLs, browser, email, password):
   for portal in URLs:
     refresh_login(browser, portal, email, password)
 
-def load_list_from_file():
+def load_list_from_file(filepath):
   URLs=[]
-  with open(file, 'r') as urllist:
+  with open(filepath, 'r') as urllist:
       for url in urllist.readlines():
         URLs.append(url.rstrip("\n"))
   return URLs

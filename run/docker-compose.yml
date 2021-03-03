@@ -10,5 +10,5 @@ services:
       - AMAZON_EMAIL=${AMAZON_EMAIL}
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
-      - ./../src/data/urls.txt:/usr/src/app/urls.txt
-      - ./../src/data/proxies.txt:/usr/src/app/proxies.txt
+      - ./../src/data/urls.txt:/usr/src/app/data/urls.txt
+      - ./../src/data/proxies.txt:/usr/src/app/data/proxies.txt

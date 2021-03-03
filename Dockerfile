@@ -35,13 +35,15 @@ ENV PYTHONUNBUFFERED=1
 ENV APP_HOME /usr/src/app
 WORKDIR /$APP_HOME
 
+COPY ./src/data/torrc /etc/tor/torrc
+
+COPY ./requirements.txt $APP_HOME/
+RUN pip3 install -r requirements.txt
+
 COPY ./src $APP_HOME/
 
 EXPOSE 9050 9051
 
-RUN pip3 install -r requirements.txt
-
-COPY ./src/data/torrc /etc/tor/torrc
 
 CMD tail -f /dev/null
 CMD service tor start && python3 main.py

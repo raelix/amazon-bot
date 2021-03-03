@@ -40,4 +40,4 @@ def get_source_ip(proxy):
         # print(source_ip)
         return source_ip
     except Exception as e:
-        print("Cannot get remote IP")
+        print("Cannot get remote IP %s" % e)
