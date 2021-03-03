@@ -1,3 +1,5 @@
 urls.txt
+proxies.txt
 __pycache__
 .dontforgetme
+src/data/*

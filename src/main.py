@@ -51,7 +51,7 @@ def login_to_amazon(URLs, browser, email, password):
   for portal in URLs:
     refresh_login(browser, portal, email, password)
 
-def load_list_from_file(file="urls.txt"):
+def load_list_from_file():
   URLs=[]
   with open(file, 'r') as urllist:
       for url in urllist.readlines():
@@ -70,8 +70,8 @@ def main():
     browser = init_browser(session_key, skip_display=True, visible=False)
   else:
     browser = init_browser(session_key, skip_display=False, visible=True)
-  URLs = load_list_from_file()
-  proxies = load_list_from_file('proxies.txt')
+  URLs = load_list_from_file('data/urls.txt')
+  proxies = load_list_from_file('data/proxies.txt')
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
   loop_login = 0
