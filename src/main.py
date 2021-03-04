@@ -14,7 +14,7 @@ session_key='dontforgetme'
 
 ## Configuration
 
-percentage=int(os.getenv('PERCENTAGE', 60))
+percentage=int(os.getenv('PERCENTAGE', 80))
 use_tor=os.getenv('USE_TOR', 'true').lower() in ['true', '1']
 isTest=os.getenv('IS_TEST', 'false').lower() in ['true', '1']
 is_running_in_container=os.getenv('IS_CONTAINERIZED', 'true').lower() in ['true', '1']
@@ -73,7 +73,7 @@ def main():
   download_new_proxies(browser, proxy_list_path)
 
   URLs = load_list_from_file(url_list_path)
-  proxies = load_list_from_file(proxy_list_path)
+  proxy_list = load_list_from_file(proxy_list_path)
 
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
@@ -87,6 +87,7 @@ def main():
     exit_flag = manager.Event()
     lock = manager.Lock()
     queue = manager.Queue()
+    proxy_index = manager.Value('i', 0)
     error_counter = manager.Value('i', 0)
     success_counter = manager.Value('i', 0)
     loop_request = manager.Value('i', 0)
@@ -94,7 +95,7 @@ def main():
       proxy = get_tor_proxies()
       my_ip = get_source_ip(proxy)
     else:
-      proxy = get_random_proxy_from_list(proxies)
+      proxy_list, proxy = get_next_proxy(proxy_list, proxy_index, browser)
       my_ip = get_source_ip(proxy)
     while True:
       # Someone lock the iteraction, probably we found a good match
@@ -123,17 +124,17 @@ def main():
       process.start()
       loop_request.value = loop_request.value + 1
       while queue.qsize() > 100:
-        print("Reached queue processes...waiting previous to complete")
+        print("Reached max queue length, waiting previous tasks to complete...")
         time.sleep(1)
       
       with lock:
         # print('error:%s, success:%s, queue:%s, total:%s' % (error_counter.value,success_counter.value,queue.qsize(),loop_request.value))
         if error_counter.value * 100 / loop_request.value > percentage:
-          print('Percentage of failures: %s' % (error_counter.value * 100 / loop_request.value))
+          print('Percentage of failures: %s%%' % int((error_counter.value * 100 / loop_request.value)))
           if use_tor:
             my_ip = renew_connection()
           else:
-            proxy = get_random_proxy_from_list(proxies)
+            proxy_list, proxy = get_next_proxy(proxy_list, proxy_index, browser)
             my_ip = get_source_ip(proxy)
           loop_request.value = queue.qsize()
           error_counter.value = 0
@@ -142,11 +143,16 @@ def main():
       urls_index += 1
       
 
-def get_random_proxy_from_list(proxies):
-  selected_proxy = random.choice(proxies)
+def get_next_proxy(proxy_list, proxy_index, browser):
+  if proxy_index.value == len(proxy_list):
+    proxy_index.value = 0
+    download_new_proxies(browser, proxy_list_path)
+    proxy_list = load_list_from_file(proxy_list_path)
+  selected_proxy = proxy_list[proxy_index.value]
   proxies_dict = {}
   proxies_dict['https'] = selected_proxy
-  return proxies_dict
+  proxy_index.value = proxy_index.value + 1
+  return proxy_list, proxies_dict
 
 if __name__ == "__main__":
   main()
