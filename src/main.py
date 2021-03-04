@@ -145,7 +145,7 @@ def main():
       
       while queue.qsize() > 100:
         print("Reached max queue length, waiting previous tasks to complete...")
-        time.sleep(1)
+        time.sleep(0.1)
       
 
       # with lock:
