@@ -23,7 +23,7 @@ def remove_file_if_exists(filename):
 
 def download_new_proxies(browser, proxy_list_path):
   remove_file_if_exists(proxy_list_path)
-  url = 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=200&country=all&ssl=all&anonymity=all&simplified=true'
+  url = 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=1000&country=all&ssl=all&anonymity=all&simplified=true'
   browser.get(url)
   time.sleep(5)
 

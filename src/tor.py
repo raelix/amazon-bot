@@ -14,8 +14,12 @@ import time
 # by noting the output from tor --hash-password "<new_password>" where <new_password> is 
 # the password that you want to set.
 
-def get_tor_proxies():
-    return {"http": 'socks5://127.0.0.1:9050', "https": 'socks5://127.0.0.1:9050'}
+def get_tor_proxies(password='testit'):
+    return {
+        'http': 'socks5://user:{}@localhost:9050'.format(password),
+        'https': 'socks5://user:{}@localhost:9050'.format(password)
+    }
+
 
 def renew_connection():
     with Controller.from_port(port = 9051) as controller:

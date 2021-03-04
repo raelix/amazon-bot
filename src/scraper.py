@@ -15,7 +15,7 @@ import requests
 #     method_whitelist=["HEAD", "GET", "OPTIONS"]
 # )
 
-def scrape(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_counter, success_counter, proxy, my_ip): 
+def scrape(queue, url, callback, lock, browser, need_to_wait, exit_flag, counters, current_hash, proxy, my_ip): 
     there_was_a_failure = False
 
     locale = get_tld(url.strip())
@@ -38,12 +38,13 @@ def scrape(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_c
 
     if there_was_a_failure:
       with lock:
-        error_counter.value = error_counter.value + 1
+        counters[current_hash]['errors'] = counters[current_hash]['errors'] + 1
         queue.get()
       return 
     else:
       with lock:
-        success_counter.value = success_counter.value + 1
+        counters[current_hash]['success'] = counters[current_hash]['success'] + 1
+
     result = parse(url, page, my_ip)
     callback(queue, result, browser, need_to_wait, exit_flag)
 

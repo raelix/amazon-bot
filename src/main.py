@@ -9,12 +9,13 @@ from multiprocessing import Queue, Process, Manager, Value
 from threading import Thread, Event, Lock
 from tor import renew_connection, get_source_ip, get_tor_proxies
 import random
+import uuid
 
 session_key='dontforgetme'
 
 ## Configuration
 
-percentage=int(os.getenv('PERCENTAGE', 80))
+percentage=int(os.getenv('PERCENTAGE', 85))
 use_tor=os.getenv('USE_TOR', 'true').lower() in ['true', '1']
 isTest=os.getenv('IS_TEST', 'false').lower() in ['true', '1']
 is_running_in_container=os.getenv('IS_CONTAINERIZED', 'true').lower() in ['true', '1']
@@ -71,7 +72,6 @@ def main():
     browser = init_browser(session_key, skip_display=False, visible=True)
 
   download_new_proxies(browser, proxy_list_path)
-
   URLs = load_list_from_file(url_list_path)
   proxy_list = load_list_from_file(proxy_list_path)
 
@@ -88,9 +88,9 @@ def main():
     lock = manager.Lock()
     queue = manager.Queue()
     proxy_index = manager.Value('i', 0)
-    error_counter = manager.Value('i', 0)
-    success_counter = manager.Value('i', 0)
-    loop_request = manager.Value('i', 0)
+    current_hash = get_unique_hash()
+    counters = manager.dict()
+    counters = init_structure(manager, counters, current_hash)
     if use_tor:
       proxy = get_tor_proxies()
       my_ip = get_source_ip(proxy)
@@ -119,29 +119,58 @@ def main():
       url = URLs[urls_index]
 
       queue.put(urls_index) 
-
-      process = Process(target=scrape, args=(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_counter, success_counter, proxy, my_ip))
+      
+      process = Process(target=scrape, args=(queue, url, callback, lock, browser, need_to_wait, exit_flag, counters, current_hash, proxy, my_ip))
       process.start()
-      loop_request.value = loop_request.value + 1
+
+      with lock:
+        counters[current_hash]['total'] = counters[current_hash]['total'] + 1
+        print('errors:%s, success:%s, total:%s - IP:%s' % (counters[current_hash]['errors'], counters[current_hash]['success'], counters[current_hash]['total'], my_ip))
+        
+        if counters[current_hash]['errors'] + counters[current_hash]['success'] > 100:
+          percentage = counters[current_hash]['errors'] * 100 / (counters[current_hash]['errors'] + counters[current_hash]['success'] )
+          if int(percentage) > 97:
+            print('Percentage of failures: %s%%' % int(percentage))
+
+            current_hash = get_unique_hash()
+
+            if use_tor:
+              proxy = get_tor_proxies(current_hash)
+              my_ip = get_source_ip(proxy)
+            else:
+              proxy_list, proxy = get_next_proxy(proxy_list, proxy_index, browser)
+              my_ip = get_source_ip(proxy)
+            
+          counters = init_structure(manager, counters, current_hash)
+      
       while queue.qsize() > 100:
         print("Reached max queue length, waiting previous tasks to complete...")
         time.sleep(1)
       
-      with lock:
-        # print('error:%s, success:%s, queue:%s, total:%s' % (error_counter.value,success_counter.value,queue.qsize(),loop_request.value))
-        if error_counter.value * 100 / loop_request.value > percentage:
-          print('Percentage of failures: %s%%' % int((error_counter.value * 100 / loop_request.value)))
-          if use_tor:
-            my_ip = renew_connection()
-          else:
-            proxy_list, proxy = get_next_proxy(proxy_list, proxy_index, browser)
-            my_ip = get_source_ip(proxy)
-          loop_request.value = queue.qsize()
-          error_counter.value = 0
-          success_counter.value = 0
+
+      # with lock:
+      #   if error_counter.value * 100 / loop_request.value > percentage:
+      #     print('Percentage of failures: %s%%' % int((error_counter.value * 100 / loop_request.value)))
+      #     if use_tor:
+      #       my_ip = renew_connection()
+      #     else:
+      #       proxy_list, proxy = get_next_proxy(proxy_list, proxy_index, browser)
+      #       my_ip = get_source_ip(proxy)
+      #     loop_request.value = queue.qsize()
+      #     error_counter.value = 0
+      #     success_counter.value = 0
 
       urls_index += 1
-      
+
+def get_unique_hash():
+  return uuid.uuid4().hex
+
+def init_structure(manager, counters, current_hash):
+    counters[current_hash] = manager.dict()
+    counters[current_hash]['total'] = 0
+    counters[current_hash]['success'] = 0
+    counters[current_hash]['errors'] = 0
+    return counters
 
 def get_next_proxy(proxy_list, proxy_index, browser):
   if proxy_index.value == len(proxy_list):
