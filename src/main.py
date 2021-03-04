@@ -1,4 +1,4 @@
-from bot import buy, init_browser, refresh_login
+from bot import buy, init_browser, refresh_login, download_new_proxies
 from scraper import scrape
 import secrets
 from amazon_domains import get_unique_domains
@@ -6,10 +6,7 @@ import json
 import time
 import os
 from multiprocessing import Queue, Process, Manager, Value
-
-from threading import Thread
-from threading import Event
-from threading import Lock
+from threading import Thread, Event, Lock
 from tor import renew_connection, get_source_ip, get_tor_proxies
 import random
 
@@ -25,6 +22,8 @@ limit_price=int(os.getenv('LIMIT_PRICE', secrets.limit_price))
 email=os.getenv('AMAZON_EMAIL', secrets.email)
 password=os.getenv('AMAZON_PASSWORD', secrets.password)
 
+proxy_list_path = 'data/http_proxies.txt'
+url_list_path = 'data/urls.txt'
 
 def callback(queue, result, browser, need_to_wait, exit_flag):
   if need_to_wait.is_set():
@@ -70,28 +69,32 @@ def main():
     browser = init_browser(session_key, skip_display=True, visible=False)
   else:
     browser = init_browser(session_key, skip_display=False, visible=True)
-  URLs = load_list_from_file('data/urls.txt')
-  proxies = load_list_from_file('data/proxies.txt')
+
+  download_new_proxies(browser, proxy_list_path)
+
+  URLs = load_list_from_file(url_list_path)
+  proxies = load_list_from_file(proxy_list_path)
+
   domains_to_login = get_unique_domains(URLs)
   login_to_amazon(domains_to_login, browser, email, password)
   loop_login = 0
   loop_before_login = 10000
-  queue = Queue()
   urls_index = 0
   with Manager() as manager:
 
+    my_ip = str()
     need_to_wait = manager.Event()
     exit_flag = manager.Event()
     lock = manager.Lock()
-    my_ip = str()
-    error_counter = Value('i', 0)
-    success_counter = Value('i', 0)
-    loop_request = Value('i', 0)
+    queue = manager.Queue()
+    error_counter = manager.Value('i', 0)
+    success_counter = manager.Value('i', 0)
+    loop_request = manager.Value('i', 0)
     if use_tor:
       proxy = get_tor_proxies()
       my_ip = get_source_ip(proxy)
     else:
-      proxy = get_new_proxy(proxies)
+      proxy = get_random_proxy_from_list(proxies)
       my_ip = get_source_ip(proxy)
     while True:
       # Someone lock the iteraction, probably we found a good match
@@ -130,7 +133,7 @@ def main():
           if use_tor:
             my_ip = renew_connection()
           else:
-            proxy = get_new_proxy(proxies)
+            proxy = get_random_proxy_from_list(proxies)
             my_ip = get_source_ip(proxy)
           loop_request.value = queue.qsize()
           error_counter.value = 0
@@ -139,7 +142,7 @@ def main():
       urls_index += 1
       
 
-def get_new_proxy(proxies):
+def get_random_proxy_from_list(proxies):
   selected_proxy = random.choice(proxies)
   proxies_dict = {}
   proxies_dict['https'] = selected_proxy

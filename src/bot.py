@@ -9,7 +9,23 @@ import threading
 import sys
 import os
 from tld import get_tld
+import pathlib
 
+
+def remove_file_if_exists(filename):
+  if os.path.exists(filename):
+    try:
+      os.remove(filename)
+    except Exception as e:
+      print ("Error: %s." % e)
+  else:  
+    print("Sorry, I can not find %s file." % filename)
+
+def download_new_proxies(browser, proxy_list_path):
+  remove_file_if_exists(proxy_list_path)
+  url = 'https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=100&country=all&ssl=all&anonymity=all&simplified=true'
+  browser.get(url)
+  time.sleep(5)
 
 def refresh_login(browser, portal, email, password):
   browser.get(portal)
@@ -195,6 +211,8 @@ def get_price(browser):
 def init_browser(session_key, skip_display=False, visible=False):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("user-data-dir=." + session_key)
+    prefs = {"download.default_directory" : pathlib.Path().absolute().as_posix() + '/data'}
+    chrome_options.add_experimental_option("prefs",prefs)
     if skip_display:
       display = Display(visible=0 if not visible else 1, size=(1024, 768))
       display.start()
