@@ -25,7 +25,7 @@ def scrape(queue, url, callback, lock, browser, need_to_wait, exit_flag, error_c
     # http.mount("https://", adapter)
     # http.mount("http://", adapter)
     try:
-      page = requests.get(url, headers=get_headers(locale), proxies=proxy, timeout=3)
+      page = requests.get(url, headers=get_headers(locale), proxies=proxy, timeout=2)
 
       if page.status_code > 500 or 'images-amazon.com/captcha' in page.content.decode():
           
