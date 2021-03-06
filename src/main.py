@@ -127,9 +127,9 @@ def main():
         counters[current_hash]['total'] = counters[current_hash]['total'] + 1
         print('errors:%s, success:%s, total:%s - IP:%s' % (counters[current_hash]['errors'], counters[current_hash]['success'], counters[current_hash]['total'], my_ip))
         
-        if counters[current_hash]['errors'] + counters[current_hash]['success'] > 100:
+        if counters[current_hash]['errors'] + counters[current_hash]['success'] > 50:
           percentage = counters[current_hash]['errors'] * 100 / (counters[current_hash]['errors'] + counters[current_hash]['success'] )
-          if int(percentage) > 97:
+          if int(percentage) > 70:
             print('Percentage of failures: %s%%' % int(percentage))
 
             current_hash = get_unique_hash()
@@ -143,8 +143,8 @@ def main():
             
           counters = init_structure(manager, counters, current_hash)
       
-      while queue.qsize() > 100:
-        print("Reached max queue length, waiting previous tasks to complete...")
+      while queue.qsize() > 50:
+        # print("Reached max queue length, waiting previous tasks to complete...")
         time.sleep(0.1)
       
 
