@@ -1,11 +1,12 @@
 #!/bin/bash
 
 export WAIT_RANDOM=false
-export REQUESTS_TIMEOUT=10
+# export POOL_SIZE=20
+export REQUEST_TIMEOUT=10
 export WAIT_BEFORE_LOGIN=1800
 export STANDALONE_PROXY=true
 export PROXY_TYPE=tor
-export AMAZON_EMAIL=
+export AMAZON_EMAIL=raelix@hotmail.it
 export AMAZON_PASSWORD=
 export PORTAL=https://www.amazon.it
 export IS_TEST=False

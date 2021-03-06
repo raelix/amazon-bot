@@ -1,12 +1,16 @@
 from multiprocessing import Queue, Process, Manager, Value
 import time
 import random
+import os
 from worker import worker_task
 from producer import producer_task
 from buyer import buyer_task
 from statistic import statistic_task
 from parser_factory import ParserFactory
 import queue as Queue
+
+
+pool_size=os.getenv('POOL_SIZE', None)
 
 class Supervisor(object):
 
@@ -43,9 +47,11 @@ class Supervisor(object):
         self.stop()
   
   def spawn_workers(self):
-    list_size = len(self.list_map)
+    n_processes = len(self.list_map)
+    if pool_size != None:
+      n_processes = int(pool_size)
     self.workers = [Process(target=worker_task, args=(self.queue, self.statistics, self.availability))
-                    for i in range(list_size)]
+                    for i in range(n_processes)]
     for worker in self.workers:
       worker.start()
 

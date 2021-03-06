@@ -4,8 +4,8 @@ import queue as Queue
 
 is_running_in_container=os.getenv('IS_CONTAINERIZED', 'false').lower() in ['true', '1']
 isTest=os.getenv('IS_TEST', 'true').lower() in ['true', '1']
-email=os.getenv('AMAZON_EMAIL', 'raelix@hotmail.it')
-password=os.getenv('AMAZON_PASSWORD', '!Enrico5252')
+email=os.getenv('AMAZON_EMAIL', '')
+password=os.getenv('AMAZON_PASSWORD', '')
 wait_before_login=int(os.getenv('WAIT_BEFORE_LOGIN', '1800'))
 portal=os.getenv('PORTAL', 'https://www.amazon.it')
 

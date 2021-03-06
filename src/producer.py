@@ -32,7 +32,7 @@ def producer_task(status, list_map, queue):
             if element_index != None:
               replace_proxy_item_from_list(proxy_list, proxy, element_index)
             else:
-              print("producer: ERROR - proxy element not found")
+              print("producer: ERROR - proxy element not found, probably already deleted")
       except Queue.Empty:
         pass
 
