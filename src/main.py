@@ -22,6 +22,9 @@ class Supervisor(object):
 
   def start(self):
     self.list_map = self.parser.get_list()
+    self.start_processes()
+  
+  def start_processes(self):
     self.spawn_workers()
     self.spawn_producer()
     self.spawn_buyer()
@@ -88,10 +91,9 @@ class Supervisor(object):
       statistic.join()
 
   def config_changed(self, list_map):
-      print(f'event type: {event.event_type}  path : {event.src_path}')
       self.list_map = list_map
-      self.stop_producer()
-      self.spawn_producer()
+      self.stop()
+      self.start_processes()
 
 def main():
   manager = Supervisor()
