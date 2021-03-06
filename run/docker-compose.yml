@@ -3,11 +3,15 @@ services:
   scraper:
     image: docker.io/raelix/amazon-bot:latest
     environment:
-      - IS_TEST=False
-      - USE_TOR=False
-      - PERCENTAGE=70
-      - LIMIT_PRICE=${LIMIT_PRICE}
+      - WAIT_RANDOM=false
+      - IS_CONTAINERIZED=true
+      - REQUESTS_TIMEOUT=10
+      - WAIT_BEFORE_LOGIN=1800
+      - STANDALONE_PROXY=true
+      - IS_TEST=false
+      - PROXY_TYPE=tor
+      - PORTAL=https://www.amazon.it
       - AMAZON_EMAIL=${AMAZON_EMAIL}
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
     volumes:
-      - ./../src/data/urls.txt:/usr/src/app/data/urls.txt
+      - ./../src/urls.txt:/usr/src/app/urls.txt

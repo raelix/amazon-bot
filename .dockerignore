@@ -2,5 +2,4 @@ urls.txt
 proxies.txt
 __pycache__
 .dontforgetme
-src/data/urls.txt
-src/data/http_proxies.txt
+src/urls.txt

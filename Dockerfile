@@ -44,6 +44,5 @@ COPY ./src $APP_HOME/
 
 EXPOSE 9050 9051
 
-
 CMD tail -f /dev/null
-CMD service tor start && python3 main.py
+CMD python3 main.py

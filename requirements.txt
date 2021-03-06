@@ -11,3 +11,4 @@ pysocks
 requests 
 requests[socks]
 stem
+watchdog

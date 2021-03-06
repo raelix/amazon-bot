@@ -4,7 +4,7 @@ import time
 import os
 import uuid
 
-standaloneProxy=os.getenv('STANDALONE_PROXY', 'false').lower() in ['true', '1']
+standaloneProxy=os.getenv('STANDALONE_PROXY', 'true').lower() in ['true', '1']
 proxyType=os.getenv('PROXY_TYPE', 'tor').lower()
 
 def producer_task(status, list_map, queue):
