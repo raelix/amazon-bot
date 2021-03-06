@@ -1,0 +1,14 @@
+selenium
+requests
+BeautifulSoup4
+price-parser
+pyvirtualdisplay
+tld
+webdriver_manager
+lxml
+more-itertools
+pysocks
+requests 
+requests[socks]
+stem
+watchdog

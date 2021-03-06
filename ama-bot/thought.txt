@@ -1,0 +1,6 @@
+Workers = prende input URL, prezzo e limite, restituisce coda buyer e coda statistica
+Buyer = prende in input URL -> compra
+Producer = prende in input statistica e frulla sugli URL e genera prezzo, url e limite 
+
+                     -> Buyer 
+Producer -> Consumer -> Statistics ->  Producer
