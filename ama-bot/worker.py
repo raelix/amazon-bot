@@ -58,7 +58,7 @@ def send_statistics(failed, task, statistics):
     return 
 
 def verify_matching(result, task):
-  if result['is_available']:
+  if result['is_available'] and result['is_amazon']:
     price = result['price']
     print('Price is %s' % price)
     if price > int(task['limit_price']):
@@ -86,6 +86,11 @@ def parse(page):
                             try_find(soup, 'input', {'id':'add-to-cart-button'})) is not None
 
   result['buy_now_available'] = try_find(soup,'span',{'id':'submit.buy-now-announce'}) is not None
+  merchant_info = try_find(soup,'div',{'id':'merchant-info'}) 
+  seller_info = try_find(soup,'a',{'id':'sellerProfileTriggerId'}) 
+  is_amazon = True if (merchant_info is not None and 'amazon' in merchant_info.lower()) or (seller_info is not None and 'amazon' in seller_info.lower()) else False
+  result['is_amazon'] = is_amazon
+  
   return result
 
 def get_price(price):

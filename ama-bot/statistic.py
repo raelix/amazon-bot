@@ -22,7 +22,7 @@ def statistic_task(statistics, status):
 
         if percentage_failures(main_map, identifier) > PERCENTAGE:
           # Too much failure let's ask to delete them
-          print('ID:%s has %s%% of failures, asking to replace it.'% (identifier, percentage_failures(main_map, identifier)))
+          print('Proxy ID:%s has %s%% of failures, asking to replace it.'% (identifier, percentage_failures(main_map, identifier)))
           status.put(delete_message(identifier))
           delete_item(main_map, identifier)
 
