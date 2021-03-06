@@ -1,7 +1,9 @@
 import queue as Queue
+import os
 
-SAMPLES = 10
-PERCENTAGE = 60
+SAMPLES = int(os.getenv('SAMPLES', '10'))
+PERCENTAGE = int(os.getenv('PERCENTAGE', '60'))
+
 
 def statistic_task(statistics, status):
   main_map = {}

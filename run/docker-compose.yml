@@ -3,13 +3,16 @@ services:
   scraper:
     image: docker.io/raelix/amazon-bot:latest
     environment:
+      # - POOL_SIZE=20
       - WAIT_RANDOM=false
-      - IS_CONTAINERIZED=true
-      - REQUESTS_TIMEOUT=10
+      - SAMPLES=10
+      - PERCENTAGE=60
+      - REQUEST_TIMEOUT=10
       - WAIT_BEFORE_LOGIN=1800
       - STANDALONE_PROXY=true
-      - IS_TEST=false
       - PROXY_TYPE=tor
+      - IS_TEST=False
+      - IS_CONTAINERIZED=true
       - PORTAL=https://www.amazon.it
       - AMAZON_EMAIL=${AMAZON_EMAIL}
       - AMAZON_PASSWORD=${AMAZON_PASSWORD}
