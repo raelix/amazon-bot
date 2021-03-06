@@ -1,4 +1,3 @@
 __pycache__
-.dontforgetme
 run/.env
-src/data/http_proxies.txt
+src/.chrome-session
