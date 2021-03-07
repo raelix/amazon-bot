@@ -6,11 +6,8 @@ export SAMPLES=10
 export PERCENTAGE=60
 export REQUEST_TIMEOUT=10
 export WAIT_BEFORE_LOGIN=1800
-export STANDALONE_PROXY=true
+export STANDALONE_PROXY=false
 export PROXY_TYPE=tor
 export IS_TEST=false
 export IS_CONTAINERIZED=false
-export PORTAL=https://www.amazon.it
-export AMAZON_EMAIL=
-export AMAZON_PASSWORD=
 cd src && python3 main.py

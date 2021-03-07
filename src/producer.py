@@ -60,11 +60,13 @@ def producer_task(status, list_map, queue):
         print(e)
       return 
 
-def get_dict(url_and_price, proxy_map, source_ip):
+def get_dict(list_map, proxy_map, source_ip):
   result = {}
-  result['url']         = url_and_price['url']
-  result['limit_price'] = url_and_price['price']
-  result['provider']    = url_and_price['provider']
+  # Only with python 3.9
+  # result = result | list_map
+  result['url']         = list_map['url']
+  result['limit_price'] = list_map['price']
+  result['provider']    = list_map['provider']
   result['source_ip']   = source_ip
   result['proxy']       = proxy_map['proxy']
   result['id']          = proxy_map['id']

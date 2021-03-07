@@ -1,24 +1,29 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from utils import load_list_from_file
 from parser_interface import ConfigParser
+import json 
 
-URLS_FILEPATH='./urls.txt'
-DEFAULT_MAX_PRICE=300
+URLS_FILEPATH='./configuration.json'
 
 class ParserText(FileSystemEventHandler, ConfigParser):
 
   def __init__(self):
     self.observer = Observer()
+    self.configuration = None
 
   def start(self, callback):
     self.observer.schedule(self, path=URLS_FILEPATH, recursive=False)
     self.observer.start()
     self.callback = callback
+    self.configuration = self.get_configuration()
 
-  def get_list(self):
-      URLs = load_list_from_file(URLS_FILEPATH)
-      return self.__create_list(URLs)
+  def get_configuration(self):
+    if self.configuration != None:
+      return self.configuration
+    else:
+      with open(URLS_FILEPATH) as json_file: 
+        self.configuration = json.load(json_file) 
+        return self.configuration
 
   def stop(self):
     self.observer.stop()
@@ -26,16 +31,13 @@ class ParserText(FileSystemEventHandler, ConfigParser):
 
   def on_modified(self, event):
       print(f'event type: {event.event_type}  path : {event.src_path}')
-      self.callback(self.get_list())
+      self.configuration = None
+      self.callback(self.get_configuration())
 
-  def __create_list(self, URLs):
-    urls_list = []
-    for url in URLs:
-      url_and_price = url.split(',')
-      url_map = {
-        'url': url_and_price[0],
-        'price': url_and_price[1] if len(url_and_price) > 1 else DEFAULT_MAX_PRICE,
-        'provider': url_and_price[2]
-      }
-      urls_list.append(url_map)
-    return urls_list
+  def get_list_URLs(self):
+    result_list = []
+    for scrape in self.get_configuration()['scrapers']:
+      for url_map in scrape['URLs']:
+        url_map['provider'] = scrape['provider']
+        result_list.append(url_map)
+    return result_list

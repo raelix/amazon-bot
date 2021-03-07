@@ -9,6 +9,11 @@ class ConfigParser(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_list(self):
+    def get_configuration(self):
         pass
+
+    @abc.abstractmethod
+    def get_list_URLs(self):
+        pass
+
 

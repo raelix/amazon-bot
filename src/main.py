@@ -25,7 +25,8 @@ class Supervisor(object):
     # self.NUMBER_OF_PROCESSES = cpu_count()
 
   def start(self):
-    self.list_map = self.parser.get_list()
+    self.configuration = self.parser.get_configuration()
+    self.list_URLs = self.parser.get_list_URLs()
     self.start_processes()
   
   def start_processes(self):
@@ -47,7 +48,7 @@ class Supervisor(object):
         self.stop()
   
   def spawn_workers(self):
-    n_processes = len(self.list_map)
+    n_processes = len(self.list_URLs)
     if pool_size != None:
       n_processes = int(pool_size)
     self.workers = [Process(target=worker_task, args=(self.queue, self.statistics, self.availability))
@@ -56,12 +57,12 @@ class Supervisor(object):
       worker.start()
 
   def spawn_producer(self):
-    self.producer = [Process(target=producer_task, args=(self.status, self.list_map, self.queue))]
+    self.producer = [Process(target=producer_task, args=(self.status, self.list_URLs, self.queue))]
     for producer in self.producer:
       producer.start()
 
   def spawn_buyer(self):
-    self.buyer = [Process(target=buyer_task, args=(self.availability, self.terminator))]
+    self.buyer = [Process(target=buyer_task, args=(self.configuration, self.availability, self.terminator))]
     for buyer in self.buyer:
       buyer.start()
 
@@ -96,8 +97,9 @@ class Supervisor(object):
       statistic.terminate()
       statistic.join()
 
-  def config_changed(self, list_map):
-      self.list_map = list_map
+  def config_changed(self, configuration):
+      self.configuration = configuration
+      self.list_URLs = self.parser.get_list_URLs()
       self.stop()
       self.start_processes()
 
