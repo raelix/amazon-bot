@@ -18,7 +18,6 @@ def buyer_task(configuration, availability, terminator):
   else:
     browser = init_browser(session_key, skip_display=False, visible=True)
   providers = populate_providers(configuration)
-  print(providers)
   login_all(browser, providers)
   while True:
     try: 
