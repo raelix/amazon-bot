@@ -34,7 +34,8 @@ class ParserText(FileSystemEventHandler, ConfigParser):
       url_and_price = url.split(',')
       url_map = {
         'url': url_and_price[0],
-        'price': url_and_price[1] if len(url_and_price) > 1 else DEFAULT_MAX_PRICE
+        'price': url_and_price[1] if len(url_and_price) > 1 else DEFAULT_MAX_PRICE,
+        'provider': url_and_price[2]
       }
       urls_list.append(url_map)
     return urls_list
