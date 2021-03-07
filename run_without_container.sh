@@ -11,6 +11,6 @@ export PROXY_TYPE=tor
 export IS_TEST=False
 export IS_CONTAINERIZED=false
 export PORTAL=https://www.amazon.it
-export AMAZON_EMAIL=raelix@hotmail.it
+export AMAZON_EMAIL=
 export AMAZON_PASSWORD=
 cd src && python3 main.py

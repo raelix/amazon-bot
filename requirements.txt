@@ -12,3 +12,4 @@ requests
 requests[socks]
 stem
 watchdog
+user_agent
