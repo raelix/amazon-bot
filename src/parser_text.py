@@ -38,6 +38,7 @@ class ParserText(FileSystemEventHandler, ConfigParser):
     result_list = []
     for scrape in self.get_configuration()['scrapers']:
       for url_map in scrape['URLs']:
-        url_map['provider'] = scrape['provider']
+        url_map['consumer'] = scrape['consumer']
+        url_map['buyer'] = scrape['buyer']
         result_list.append(url_map)
     return result_list

@@ -22,7 +22,7 @@ def buyer_task(configuration, availability, terminator):
   while True:
     try: 
       task = availability.get(True, wait_before_login)
-      success = providers[task['provider']]['instance'].buy(browser, task['url'], isTest)
+      success = providers[task['buyer']]['instance'].buy(browser, task['url'], isTest)
       if success:
         time.sleep(5)
         terminator.put('END')
@@ -37,11 +37,11 @@ def buyer_task(configuration, availability, terminator):
 def populate_providers(configuration):
   providers = {}
   for scraper in configuration['scrapers']:
-    providers[scraper['provider']] = {}
-    providers[scraper['provider']]['instance'] = BotFactory().get_bot(scraper['provider'])
-    providers[scraper['provider']]['username'] = scraper['username']
-    providers[scraper['provider']]['password'] = scraper['password']
-    providers[scraper['provider']]['portal'] = scraper['portal']
+    providers[scraper['buyer']] = {}
+    providers[scraper['buyer']]['instance'] = BotFactory().get_bot(scraper['buyer'])
+    providers[scraper['buyer']]['username'] = scraper['username']
+    providers[scraper['buyer']]['password'] = scraper['password']
+    providers[scraper['buyer']]['portal'] = scraper['portal']
   return providers
     
 def login_all(browser, providers):

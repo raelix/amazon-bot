@@ -23,17 +23,17 @@ def worker_task(queue, statistics, availability):
         send_statistics(True, task, statistics)
         continue
       
-      if not ScraperFactory.get_scraper(task['provider']).is_valid(page):
+      if not ScraperFactory.get_scraper(task['consumer']).is_valid(page):
         # print('Captcha %s' % page.status_code) 
         send_statistics(True, task, statistics)
         continue
 
       send_statistics(False, task, statistics)
-      result = ScraperFactory.get_scraper(task['provider']).parse(page)
+      result = ScraperFactory.get_scraper(task['consumer']).parse(page)
 
       print(json.dumps(result, indent=4, sort_keys=True))
 
-      if ScraperFactory.get_scraper(task['provider']).verify_matching(result, task):
+      if ScraperFactory.get_scraper(task['consumer']).verify_matching(result, task):
         availability.put(task)
 
     except Queue.Empty:

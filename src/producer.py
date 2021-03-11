@@ -66,7 +66,8 @@ def get_dict(list_map, proxy_map, source_ip):
   # result = result | list_map
   result['url']         = list_map['url']
   result['limit_price'] = list_map['price']
-  result['provider']    = list_map['provider']
+  result['consumer']    = list_map['consumer']
+  result['buyer']       = list_map['buyer']
   result['source_ip']   = source_ip
   result['proxy']       = proxy_map['proxy']
   result['id']          = proxy_map['id']
