@@ -1,4 +1,4 @@
-from multiprocessing import Queue, Process, Manager, Value
+from multiprocessing import Queue, Process, Manager, Value, Event
 import time
 import random
 import os
@@ -21,6 +21,7 @@ class Supervisor(object):
     self.status = self.manager.Queue()
     self.availability = self.manager.Queue()
     self.terminator = self.manager.Queue()
+    self.event = self.manager.Event()
     self.parser = ParserFactory().get_parser(self.config_changed, 'text')
     # self.NUMBER_OF_PROCESSES = cpu_count()
 
@@ -51,7 +52,7 @@ class Supervisor(object):
     n_processes = len(self.list_URLs)
     if pool_size != None:
       n_processes = int(pool_size)
-    self.workers = [Process(target=worker_task, args=(self.queue, self.statistics, self.availability))
+    self.workers = [Process(target=worker_task, args=(self.event, self.queue, self.statistics, self.availability))
                     for i in range(n_processes)]
     for worker in self.workers:
       worker.start()
@@ -62,7 +63,7 @@ class Supervisor(object):
       producer.start()
 
   def spawn_buyer(self):
-    self.buyer = [Process(target=buyer_task, args=(self.configuration, self.availability, self.terminator))]
+    self.buyer = [Process(target=buyer_task, args=(self.event, self.configuration, self.availability, self.terminator))]
     for buyer in self.buyer:
       buyer.start()
 

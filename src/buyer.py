@@ -12,21 +12,28 @@ wait_before_login=int(os.getenv('WAIT_BEFORE_LOGIN', '1800'))
 
 session_key='chrome-session'
 
-def buyer_task(configuration, availability, terminator):
+def buyer_task(event, configuration, availability, terminator):
+  print('Initializing browser...locking other processes')
+  event.set()
   if is_running_in_container:
     browser = init_browser(session_key, skip_display=True, visible=False)
   else:
     browser = init_browser(session_key, skip_display=False, visible=True)
   providers = populate_providers(configuration)
   login_all(browser, providers)
+  event.clear()
+  print('Initialized. Unlocking processes')
   while True:
     try: 
       task = availability.get(True, wait_before_login)
+      event.set()
       success = providers[task['buyer']]['instance'].buy(browser, task['url'], isTest)
       if success:
         time.sleep(5)
         terminator.put('END')
         exit(0)
+      else:
+        event.clear()
     except Queue.Empty:
       print('buyer: waiting message to buy :) let me verify the login in the meantime')
       login_all(browser, providers)

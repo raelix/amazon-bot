@@ -7,9 +7,11 @@ from scraper_factory import ScraperFactory
 request_timeout=int(os.getenv('REQUEST_TIMEOUT', '5').lower())
 wait_random=os.getenv('WAIT_RANDOM', 'false').lower() in ['true', '1']
 
-def worker_task(queue, statistics, availability):
+def worker_task(event, queue, statistics, availability):
   while True:
     try:
+      while event.is_set():
+        time.sleep(2)
       task = queue.get(True, 1)
 
       locale = get_tld(task['url'].strip())
