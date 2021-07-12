@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-07-12T11:04:06.555Z" agent="5.0 (X11)" etag="JLNbddhSFmCgsH-77Bl3" version="14.8.5" type="github">
+<mxfile host="app.diagrams.net" modified="2021-07-12T11:07:22.711Z" agent="5.0 (X11)" etag="K8bGJ-E_H93NNDEakyQY" version="14.8.5" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1185" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -121,9 +121,9 @@
         <mxCell id="pL0gPGD2MSd4G1JxEeV1-35" value="Waiting for available runners" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="610" y="80" width="150" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="pL0gPGD2MSd4G1JxEeV1-40" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-41">
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-40" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-41" target="pL0gPGD2MSd4G1JxEeV1-46">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1330" y="425.08333333333326" as="targetPoint" />
+            <mxPoint x="1320" y="425" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="pL0gPGD2MSd4G1JxEeV1-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-41" target="pL0gPGD2MSd4G1JxEeV1-22">
@@ -140,6 +140,30 @@
         </mxCell>
         <mxCell id="pL0gPGD2MSd4G1JxEeV1-41" value="it worked?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
           <mxGeometry x="1170" y="390" width="80" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-48" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-46" target="pL0gPGD2MSd4G1JxEeV1-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-50" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-46" target="pL0gPGD2MSd4G1JxEeV1-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-46" value="Is a unrollbackable component?" style="rhombus;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=12;align=center;strokeWidth=1;spacing=6;spacingTop=-4;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1330" y="360" width="140" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-53" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-47" target="pL0gPGD2MSd4G1JxEeV1-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-47" value="Cleanup to the previous version of the BoM" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1530" y="398.75" width="100" height="52.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-52" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="pL0gPGD2MSd4G1JxEeV1-49" target="pL0gPGD2MSd4G1JxEeV1-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-49" value="Fresh install with BoM from the master branch" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1350" y="550" width="100" height="52.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pL0gPGD2MSd4G1JxEeV1-51" value="Pipeline Succeded" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1530" y="550" width="100" height="52.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
