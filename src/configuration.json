@@ -1,0 +1,136 @@
+{
+	"engine": {},
+	"scrapers": [{
+			"consumer": "amazon",
+			"buyer": "amazon-de",
+			"username": "",
+			"password": "",
+			"portal": "https://www.amazon.de",
+			"URLs": [{
+					"url": "https://www.amazon.de/dp/B08HBF5L3K/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08HBJB7YD/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08KHFZN9P/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08KHL21CV/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08KHL2J5X/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08LBVNKT1/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08LDT6HQ5/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08LNPPCWJ/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08LNQTSCT/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08LNWPYRS/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08P7ZKQPP/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08HJ9XFNM/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08HN4DSTC/?m=A3JWKAKR8XB7XF&smid=A3JWKAKR8XB7XF",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08HR1NPPQ/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08HR3Y5GQ/?m=A3OJWAJQNSBARP&smid=A3OJWAJQNSBARP",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.de/dp/B08K3PDL9K/?m=A8KICS1PHF7ZO&smid=A8KICS1PHF7ZO",
+					"price": 800
+				}
+			]
+		},
+		{
+			"consumer": "amazon",
+			"buyer": "amazon",
+			"username": "",
+			"password": "",
+			"portal": "https://www.amazon.it",
+			"URLs": [{
+					"url": "https://www.amazon.it/dp/B08HBF5L3K/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08HBJB7YD/?m=A11IL2PNWYJU7H&smid=A11IL2PNWYJU7H",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08KHFZN9P/?m=A11IL2PNWYJU7H&smid=A11IL2PNWYJU7H",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08KHL21CV/?m=A11IL2PNWYJU7H&smid=A11IL2PNWYJU7H",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08KHL21CV/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08KHL2J5X/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08LNPPCWJ/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08LNQTSCT/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08LNWPYRS/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08LNY8P5L/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08P7ZKQPP/?m=A11IL2PNWYJU7H&smid=A11IL2PNWYJU7H",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08HN4DSTC/?m=A11IL2PNWYJU7H&smid=A11IL2PNWYJU7H",
+					"price": 800
+				},
+				{
+					"url": "https://www.amazon.it/dp/B08HN4DSTC/?m=A1HO9729ND375Y&smid=A1HO9729ND375Y",
+					"price": 800
+				}
+			]
+		}
+	]
+}
