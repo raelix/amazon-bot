@@ -1,13 +1,18 @@
 # Amazon bot 
-This project allow users to buy from amazon when an item becomes available, sells and shipped by Amazon. You need to define a list of URLs and a limit price. It relies on ToR exit-nodes to avoid BAN from Amazon. The scrape is done with python requests and it uses Selenium to buy the items when the scrape returns matching items. All the actors are python multiprocesses and the data are shared using queues. 
-Main actors are:
+This project allows to buy from amazon when an item becomes available. It works mainly when it is sells and shipped by Amazon. 
+You need to define a list of URLs and a price limit. 
+
+It relies on ToR exit-nodes to be anonymous. 
+
+The scrape process is python based and uses Selenium to buy the items when the scrape returns a matching item. It uses multiprocesses to speed up the scraping and the data are shared using multiple queues. 
+Main components are:
 - Supervisor - Supervise processes and stop them once buy is done.
 - Producer - Interact with ToR and produce URLs and proxies for the consumers.
 - Consumers/Workers - Scrape endpoint and generate a result for the buyer.
-- Statistic module - Receive info about requests. It take care of replace ToR circuit when scraping is blocked.
-- Buyer - Runs login at the beginning and after a specific amount of time. It wait for an item is ready to be purchased.
+- Buyer - Runs login at the beginning and after a specific amount of time to keep the session ope. It wait for an item to be available and then purchase it.
+- Statistic module - Receives info about requests. It takes care of replacing ToR circuit when scraping is blocked.
 
-***This script is intented to be used just to understand how scraper works, please just study it but DO NOT use it to buy products, I do not take any responsibility for improper use***
+***This script is intented to be used just to understand how scraper works, please just study the code but DO NOT use against real Amazon endpoints to buy products, this is not allowed! I do not have any responsibility for improper use!!!!***
 
 
 ## Environment variables
@@ -55,9 +60,6 @@ Then run it:
 ```
 ./run_without_container.sh
 ```
-
-## Testing
-This project has been tested only with Amazon.it
 
 ## TODO
 - [] Generate a scraper to fetch dynamic URL based on keywords
